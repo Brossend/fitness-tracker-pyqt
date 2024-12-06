@@ -11,3 +11,6 @@ def initialize_database():
         conn.executescript(schema_file.read())
     conn.close()
     print("Database initialized successfully!")
+
+if __name__ == "__main__":
+    initialize_database()
