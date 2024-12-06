@@ -1,5 +1,4 @@
-def print_hi(name):
-    print(f'Hi, {name}')
+from src.db_setup import initialize_database
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    initialize_database()
