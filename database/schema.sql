@@ -24,3 +24,13 @@ CREATE TABLE Workouts (
     date DATE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(id)
 );
+
+CREATE TABLE ActivityLog (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    activity_date DATE NOT NULL,
+    steps INTEGER DEFAULT 0,
+    distance REAL DEFAULT 0.0,
+    calories_burned REAL DEFAULT 0.0,
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+);
