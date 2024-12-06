@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWid
 
 from PyQt5.QtWidgets import QMenuBar, QAction, QMessageBox
 
+from src.registration_widget import RegistrationWidget
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -10,33 +12,29 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Fitness Tracker")
         self.setGeometry(100, 100, 800, 600)
 
-        # Установка меню
+        # Меню
         menu_bar = QMenuBar(self)
         self.setMenuBar(menu_bar)
 
-        # Файл
+        # Меню "Файл"
         file_menu = menu_bar.addMenu("Файл")
         exit_action = QAction("Выход", self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
-        # Справка
-        help_menu = menu_bar.addMenu("Справка")
-        about_action = QAction("О программе", self)
-        about_action.triggered.connect(self.show_about_dialog)
-        help_menu.addAction(about_action)
+        # Меню "Пользователь"
+        user_menu = menu_bar.addMenu("Пользователь")
+        register_action = QAction("Регистрация", self)
+        register_action.triggered.connect(self.show_registration)
+        user_menu.addAction(register_action)
 
         # Центральный виджет
-        central_widget = QWidget()
-        layout = QVBoxLayout()
-        label = QLabel("Добро пожаловать в Fitness Tracker!")
-        label.setStyleSheet("font-size: 20px; font-weight: bold;")
-        layout.addWidget(label)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
 
-    def show_about_dialog(self):
-        QMessageBox.about(self, "О программе", "Fitness Tracker v1.0\nРазработано с использованием PyQt5.")
+    def show_registration(self):
+        registration_widget = RegistrationWidget()
+        self.setCentralWidget(registration_widget)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
