@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
 )
 from db_manager import DatabaseManager
+from src.dashboard_widget import DashboardWidget
 
 
 class LoginWidget(QWidget):
@@ -43,10 +44,10 @@ class LoginWidget(QWidget):
             QMessageBox.warning(self, "Ошибка", "Все поля обязательны для заполнения.")
             return
 
-        # Проверка данных в базе
         user = self.db_manager.authenticate_user(email, password)
         if user:
             QMessageBox.information(self, "Успех", f"Добро пожаловать, {user['name']}!")
+            self.parent().setCentralWidget(DashboardWidget(user))  # Переход на личный кабинет
         else:
             QMessageBox.warning(self, "Ошибка", "Неверный email или пароль.")
 
