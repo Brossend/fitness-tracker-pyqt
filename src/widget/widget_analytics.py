@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
-from db_manager import DatabaseManager
+
+from src.db.db_manager import DatabaseManager
 
 
 class AnalyticsWidget(QWidget):
@@ -32,5 +33,5 @@ class AnalyticsWidget(QWidget):
         self.setLayout(layout)
 
     def go_back(self):
-        from dashboard_widget import DashboardWidget
+        from src.widget.widget_dashboard import DashboardWidget
         self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))

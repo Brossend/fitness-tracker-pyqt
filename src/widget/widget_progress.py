@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (
 )
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from db_manager import DatabaseManager
+
+from src.db.db_manager import DatabaseManager
 
 
 class ProgressWidget(QWidget):
@@ -65,5 +66,5 @@ class ProgressWidget(QWidget):
         self.canvas.draw()
 
     def go_back(self):
-        from dashboard_widget import DashboardWidget
+        from src.widget.widget_dashboard import DashboardWidget
         self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))

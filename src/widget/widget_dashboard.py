@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 
-from src.activity_widget import ActivityWidget
-from src.analytics_widget import AnalyticsWidget
-from src.goals_widget import GoalsWidget
-from src.progress_widget import ProgressWidget
+from src.widget.widget_activity import ActivityWidget
+from src.widget.widget_analytics import AnalyticsWidget
+from src.widget.widget_goals import GoalsWidget
+from src.widget.widget_progress import ProgressWidget
 
 
 class DashboardWidget(QWidget):
@@ -64,5 +64,5 @@ class DashboardWidget(QWidget):
         self.parent().setCentralWidget(AnalyticsWidget(self.user_data['id']))
 
     def logout(self):
-        from login_widget import LoginWidget
+        from src.widget.widget_login import LoginWidget
         self.parent().setCentralWidget(LoginWidget())

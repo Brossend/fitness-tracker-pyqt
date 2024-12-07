@@ -1,12 +1,11 @@
+import os
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 
-from PyQt5.QtWidgets import QMenuBar, QAction, QMessageBox
+from PyQt5.QtWidgets import QMenuBar, QAction
 
-from src.registration_widget import RegistrationWidget
-
-from login_widget import LoginWidget
-
+from src.widget.widget_login import LoginWidget
+from src.widget.widget_registration import RegistrationWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):

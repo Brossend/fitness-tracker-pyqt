@@ -1,10 +1,16 @@
 import sqlite3
 from datetime import datetime, timedelta
+import os
 
-DB_PATH = 'database/fitness_tracker.db'
+# Определяем путь к текущему файлу
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Абсолютный путь к базе данных
+DB_PATH = os.path.join(BASE_DIR, '../../database/fitness_tracker.db')
 
 
 def seed_database():
+    # Подключение к базе данных
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 

@@ -50,19 +50,19 @@ Fitness Tracker — это приложение для мониторинга ф
 Прежде чем запустить приложение, создайте базу данных с помощью скрипта db_setup.py
 
 ```bash
-    python src/db_setup.py
+    python src/db/db_setup.py
 ```
 
 ### 5. Заполните БД для тестирования (опционально)
 
 ```bash
-    python src/seed_database.py
+    python src/seed/seed_database.py
 ```
 
 ### 7. Запустите приложение
 
 ```bash
-    python src/main.py
+    python -m src.main
 ```
 Теперь приложение будет доступно на вашем локальном сервере.
 
