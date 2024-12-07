@@ -86,3 +86,32 @@ class DatabaseManager:
 
     def close(self):
         self.connection.close()
+
+    def get_analytics(self, user_id):
+        self.cursor.execute(
+            """
+            SELECT AVG(steps), AVG(calories_burned)
+            FROM ActivityLog
+            WHERE user_id = ? AND activity_date >= DATE('now', '-7 days')
+            """,
+            (user_id,)
+        )
+        avg_steps, avg_calories = self.cursor.fetchone()
+
+        self.cursor.execute(
+            """
+            SELECT activity_date, steps
+            FROM ActivityLog
+            WHERE user_id = ?
+            ORDER BY steps DESC
+            LIMIT 1
+            """,
+            (user_id,)
+        )
+        best_day = self.cursor.fetchone()
+
+        return {
+            "avg_steps": int(avg_steps) if avg_steps else 0,
+            "avg_calories": int(avg_calories) if avg_calories else 0,
+            "best_day": {"date": best_day[0], "steps": best_day[1]} if best_day else {"date": "-", "steps": 0}
+        }
