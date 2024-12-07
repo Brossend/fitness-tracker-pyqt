@@ -1,12 +1,13 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
 
 
 class AnalyticsWidget(QWidget):
-    def __init__(self, user_id):
+    def __init__(self):
         super().__init__()
-        self.user_id = user_id
+        self.user_data = state_session.get_user()
         self.db_manager = DatabaseManager()
         self.init_ui()
 
@@ -20,7 +21,7 @@ class AnalyticsWidget(QWidget):
         layout.addWidget(QLabel("Аналитика активности"))
 
         # Получение данных аналитики
-        analytics = self.db_manager.get_analytics(self.user_id)
+        analytics = self.db_manager.get_analytics(self.user_data['id'])
 
         # Средние значения
         layout.addWidget(QLabel(f"Среднее количество шагов за неделю: {analytics['avg_steps']}"))
@@ -34,4 +35,4 @@ class AnalyticsWidget(QWidget):
 
     def go_back(self):
         from src.widget.widget_dashboard import DashboardWidget
-        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_data['id'], "name": self.user_data['name']}))

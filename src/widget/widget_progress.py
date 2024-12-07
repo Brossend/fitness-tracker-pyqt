@@ -5,12 +5,13 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
 
 
 class ProgressWidget(QWidget):
-    def __init__(self, user_id):
+    def __init__(self):
         super().__init__()
-        self.user_id = user_id
+        self.user_data = state_session.get_user()
         self.db_manager = DatabaseManager()
         self.init_ui()
         self.load_progress()
@@ -40,7 +41,7 @@ class ProgressWidget(QWidget):
 
     def load_progress(self):
         self.progress_table.setRowCount(0)  # Очистка таблицы
-        progress_data = self.db_manager.get_progress(self.user_id)
+        progress_data = self.db_manager.get_progress(self.user_data['id'])
 
         # Заполнение таблицы
         for row, entry in enumerate(progress_data):
@@ -67,4 +68,4 @@ class ProgressWidget(QWidget):
 
     def go_back(self):
         from src.widget.widget_dashboard import DashboardWidget
-        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_data['id'], "name": self.user_data['name']}))

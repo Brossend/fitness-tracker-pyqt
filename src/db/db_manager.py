@@ -18,8 +18,10 @@ class DatabaseManager:
                 """,
                 (name, email, password)
             )
+
             self.connection.commit()
-            return True
+
+            return self.authenticate_user(name, password)
         except sqlite3.IntegrityError:
             return False
 
@@ -34,6 +36,38 @@ class DatabaseManager:
         if user:
             return {"id": user[0], "name": user[1]}
         return None
+
+    def update_password(self, user_id, new_password):
+        self.cursor.execute(
+            """
+            UPDATE Users
+            SET password = ?
+            WHERE id = ?;
+            """,
+            (new_password, user_id)
+        )
+        self.connection.commit()
+
+    def delete_user(self, user_id):
+        self.cursor.execute(
+            """
+            DELETE FROM Users
+            WHERE id = ?;
+            """,
+            (user_id,)
+        )
+        self.connection.commit()
+
+    def update_user_details(self, user_id, new_name, new_email):
+        self.cursor.execute(
+            """
+            UPDATE Users
+            SET name = ?, email = ?
+            WHERE id = ?;
+            """,
+            (new_name, new_email, user_id)
+        )
+        self.connection.commit()
 
     def get_goals(self, user_id):
         self.cursor.execute(

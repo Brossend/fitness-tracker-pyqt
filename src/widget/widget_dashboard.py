@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 
+from src.state.state_session import state_session
 from src.widget.widget_activity import ActivityWidget
 from src.widget.widget_analytics import AnalyticsWidget
 from src.widget.widget_goals import GoalsWidget
+from src.widget.widget_profile import ProfileWidget
 from src.widget.widget_progress import ProgressWidget
 
 
@@ -17,6 +19,10 @@ class DashboardWidget(QWidget):
 
         # Навигационное меню
         nav_layout = QHBoxLayout()
+
+        profile_button = QPushButton("Мой профиль")
+        profile_button.clicked.connect(self.show_profile)
+        layout.addWidget(profile_button)
 
         goals_button = QPushButton("Цели")
         goals_button.clicked.connect(self.show_goals)
@@ -52,17 +58,21 @@ class DashboardWidget(QWidget):
         self.setLayout(layout)
 
     def show_add_activity(self):
-        self.parent().setCentralWidget(ActivityWidget(self.user_data['id']))
+        self.parent().setCentralWidget(ActivityWidget())
 
     def show_goals(self):
-        self.parent().setCentralWidget(GoalsWidget(self.user_data['id']))
+        self.parent().setCentralWidget(GoalsWidget())
 
     def show_progress(self):
-        self.parent().setCentralWidget(ProgressWidget(self.user_data['id']))
+        self.parent().setCentralWidget(ProgressWidget())
 
     def show_analytics(self):
-        self.parent().setCentralWidget(AnalyticsWidget(self.user_data['id']))
+        self.parent().setCentralWidget(AnalyticsWidget())
+
+    def show_profile(self):
+        self.parent().setCentralWidget(ProfileWidget())
 
     def logout(self):
         from src.widget.widget_login import LoginWidget
         self.parent().setCentralWidget(LoginWidget())
+        state_session.clear_user()

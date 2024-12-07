@@ -4,15 +4,16 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QDate
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
 
 
 class ActivityWidget(QWidget):
-    def __init__(self, user_id):
+    def __init__(self):
         super().__init__()
         self.calories_input = ''
         self.steps_input = ''
         self.date_input = ''
-        self.user_id = user_id
+        self.user_data = state_session.get_user()
         self.db_manager = DatabaseManager()
         self.init_ui()
 
@@ -64,7 +65,7 @@ class ActivityWidget(QWidget):
         try:
             steps = int(steps)
             calories = float(calories)
-            self.db_manager.add_activity(self.user_id, date, steps, calories)
+            self.db_manager.add_activity(self.user_data['id'], date, steps, calories)
             QMessageBox.information(self, "Успех", "Активность добавлена успешно!")
             self.steps_input.clear()
             self.calories_input.clear()
@@ -76,4 +77,4 @@ class ActivityWidget(QWidget):
 
     def go_back(self):
         from src.widget.widget_dashboard import DashboardWidget
-        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_data['id'], "name": self.user_data['name']}))

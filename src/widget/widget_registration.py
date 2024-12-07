@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import (
 )
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
+from src.widget.widget_dashboard import DashboardWidget
 
 
 class RegistrationWidget(QWidget):
@@ -51,9 +53,8 @@ class RegistrationWidget(QWidget):
         success = self.db_manager.add_user(name, email, password)
         if success:
             QMessageBox.information(self, "Успех", "Регистрация прошла успешно!")
-            self.name_input.clear()
-            self.email_input.clear()
-            self.password_input.clear()
+            state_session.set_user({**success, 'email': email, 'password': password})
+            self.parent().setCentralWidget(DashboardWidget(success))  # Переход на личный кабинет
         else:
             QMessageBox.warning(self, "Ошибка", "Пользователь с таким email уже существует.")
 

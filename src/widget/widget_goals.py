@@ -3,15 +3,16 @@ from PyQt5.QtWidgets import (
 )
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
 
 
 class GoalsWidget(QWidget):
-    def __init__(self, user_id):
+    def __init__(self):
         super().__init__()
         self.goal_target_input = ''
         self.goal_name_input = ''
         self.goals_table = ''
-        self.user_id = user_id
+        self.user_data = state_session.get_user()
         self.db_manager = DatabaseManager()
         self.init_ui()
         self.load_goals()
@@ -51,7 +52,7 @@ class GoalsWidget(QWidget):
 
     def load_goals(self):
         self.goals_table.setRowCount(0)  # Очистка таблицы
-        goals = self.db_manager.get_goals(self.user_id)
+        goals = self.db_manager.get_goals(self.user_data['id'])
         for row, goal in enumerate(goals):
             self.goals_table.insertRow(row)
             self.goals_table.setItem(row, 0, QTableWidgetItem(goal["goal_name"]))
@@ -68,7 +69,7 @@ class GoalsWidget(QWidget):
 
         try:
             target_value = float(target_value)
-            self.db_manager.add_goal(self.user_id, goal_name, target_value)
+            self.db_manager.add_goal(self.user_data['id'], goal_name, target_value)
             QMessageBox.information(self, "Успех", "Цель добавлена успешно!")
             self.goal_name_input.clear()
             self.goal_target_input.clear()
@@ -78,4 +79,4 @@ class GoalsWidget(QWidget):
 
     def go_back(self):
         from src.widget.widget_dashboard import DashboardWidget
-        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_data['id'], "name": self.user_data['name']}))

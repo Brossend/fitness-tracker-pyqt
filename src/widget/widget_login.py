@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (
 )
 
 from src.db.db_manager import DatabaseManager
+from src.state.state_session import state_session
 from src.widget.widget_dashboard import DashboardWidget
 
 
@@ -48,6 +49,7 @@ class LoginWidget(QWidget):
         user = self.db_manager.authenticate_user(email, password)
         if user:
             QMessageBox.information(self, "Успех", f"Добро пожаловать, {user['name']}!")
+            state_session.set_user({**user, 'email': email, 'password': password})
             self.parent().setCentralWidget(DashboardWidget(user))  # Переход на личный кабинет
         else:
             QMessageBox.warning(self, "Ошибка", "Неверный email или пароль.")

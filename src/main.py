@@ -1,9 +1,10 @@
 import os
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox
 
 from PyQt5.QtWidgets import QMenuBar, QAction
 
+from src.state.state_session import state_session
 from src.widget.widget_login import LoginWidget
 from src.widget.widget_registration import RegistrationWidget
 
@@ -39,12 +40,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
     def show_registration(self):
-        registration_widget = RegistrationWidget()
-        self.setCentralWidget(registration_widget)
+        if state_session.get_user():
+            QMessageBox.warning(self, "Ошибка", "Вы уже вошли в систему.")
+        else:
+            registration_widget = RegistrationWidget()
+            self.setCentralWidget(registration_widget)
 
     def show_login(self):
-        login_widget = LoginWidget()
-        self.setCentralWidget(login_widget)
+        if state_session.get_user():
+            QMessageBox.warning(self, "Ошибка", "Вы уже вошли в систему.")
+        else:
+            login_widget = LoginWidget()
+            self.setCentralWidget(login_widget)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
