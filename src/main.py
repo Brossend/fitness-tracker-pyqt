@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QMenuBar, QAction, QMessageBox
 
 from src.registration_widget import RegistrationWidget
 
+from login_widget import LoginWidget
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -24,6 +26,11 @@ class MainWindow(QMainWindow):
 
         # Меню "Пользователь"
         user_menu = menu_bar.addMenu("Пользователь")
+
+        login_action = QAction("Войти", self)
+        login_action.triggered.connect(self.show_login)
+        user_menu.addAction(login_action)
+
         register_action = QAction("Регистрация", self)
         register_action.triggered.connect(self.show_registration)
         user_menu.addAction(register_action)
@@ -35,6 +42,10 @@ class MainWindow(QMainWindow):
     def show_registration(self):
         registration_widget = RegistrationWidget()
         self.setCentralWidget(registration_widget)
+
+    def show_login(self):
+        login_widget = LoginWidget()
+        self.setCentralWidget(login_widget)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

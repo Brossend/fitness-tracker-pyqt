@@ -21,5 +21,17 @@ class DatabaseManager:
         except sqlite3.IntegrityError:
             return False
 
+    def authenticate_user(self, email, password):
+        self.cursor.execute(
+            """
+            SELECT id, name FROM Users WHERE email = ? AND password = ?
+            """,
+            (email, password)
+        )
+        user = self.cursor.fetchone()
+        if user:
+            return {"id": user[0], "name": user[1]}
+        return None
+
     def close(self):
         self.connection.close()
