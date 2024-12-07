@@ -79,8 +79,7 @@ fitness-tracker/
 │   ├── achievements_widget.py # Экран достижений
 │   ├── activity_widget.py   # Экран записи активности
 │   ├── progress_widget.py   # Экран прогресса
-│   ├── analytics_widget.py  # Экран аналитики
-│   └── global_state.py      # Глобальные переменные (например, состояние входа)
+│   └── analytics_widget.py  # Экран аналитики
 ├── database/                # Папка для хранения базы данных
 │   └── fitness_tracker.db   # База данных SQLite
 ├── requirements.txt         # Зависимости проекта
