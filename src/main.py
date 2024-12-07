@@ -1,6 +1,6 @@
 import os
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QVBoxLayout, QLabel
 
 from PyQt5.QtWidgets import QMenuBar, QAction
 
@@ -18,14 +18,16 @@ class MainWindow(QMainWindow):
         menu_bar = QMenuBar(self)
         self.setMenuBar(menu_bar)
 
-        # Меню "Файл"
-        file_menu = menu_bar.addMenu("Файл")
+        program_menu = menu_bar.addMenu("Программа")
+        about_action = QAction("О программе", self)
+        about_action.triggered.connect(self.show_about_dialog)
+        program_menu.addAction(about_action)
+
         exit_action = QAction("Выход", self)
         exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
+        program_menu.addAction(exit_action)
 
-        # Меню "Пользователь"
-        user_menu = menu_bar.addMenu("Пользователь")
+        user_menu = menu_bar.addMenu("Авторизация")
 
         login_action = QAction("Войти", self)
         login_action.triggered.connect(self.show_login)
@@ -36,8 +38,13 @@ class MainWindow(QMainWindow):
         user_menu.addAction(register_action)
 
         # Центральный виджет
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+        central_widget = QWidget()
+        layout = QVBoxLayout()
+        label = QLabel("Добро пожаловать в Fitness Tracker!")
+        label.setStyleSheet("font-size: 20px; font-weight: bold;")
+        layout.addWidget(label)
+        central_widget.setLayout(layout)
+        self.setCentralWidget(central_widget)
 
     def show_registration(self):
         if state_session.get_user():
@@ -52,6 +59,9 @@ class MainWindow(QMainWindow):
         else:
             login_widget = LoginWidget()
             self.setCentralWidget(login_widget)
+
+    def show_about_dialog(self):
+        QMessageBox.about(self, "О программе", "Fitness Tracker v1.0\nРазработано Лямцевым Иваном и Мирясовым Сергеем, ИСТ-213.")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

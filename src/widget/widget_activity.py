@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QDateEdit
+    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QDateEdit, QTableWidgetItem, QInputDialog,
+    QTableWidget
 )
 from PyQt5.QtCore import QDate
 
@@ -27,6 +28,12 @@ class ActivityWidget(QWidget):
         # Заголовок
         layout.addWidget(QLabel("Добавить активность"))
 
+        # Таблица для отображения активности
+        self.activities_table = QTableWidget()
+        self.activities_table.setColumnCount(3)
+        self.activities_table.setHorizontalHeaderLabels(["Дата", "Шаги", "Калории"])
+        layout.addWidget(self.activities_table)
+
         # Поле для ввода даты
         layout.addWidget(QLabel("Дата:"))
         self.date_input = QDateEdit()
@@ -46,12 +53,76 @@ class ActivityWidget(QWidget):
         self.calories_input.setPlaceholderText("Введите количество сожженных калорий")
         layout.addWidget(self.calories_input)
 
-        # Кнопка добавления
+        # Кнопка добавления активности
         add_button = QPushButton("Добавить активность")
         add_button.clicked.connect(self.add_activity)
         layout.addWidget(add_button)
 
+        # Кнопка редактирования активности
+        edit_button = QPushButton("Редактировать активность")
+        edit_button.clicked.connect(self.edit_activity)
+        layout.addWidget(edit_button)
+
+        # Кнопка удаления активности
+        delete_button = QPushButton("Удалить активность")
+        delete_button.clicked.connect(self.delete_activity)
+        layout.addWidget(delete_button)
+
         self.setLayout(layout)
+        self.load_activities()  # Загружаем данные активности
+
+    def load_activities(self):
+        self.activities_table.setRowCount(0)  # Очистка таблицы
+        activities = self.db_manager.get_activities(self.user_data['id'])
+        for row, activity in enumerate(activities):
+            self.activities_table.insertRow(row)
+            self.activities_table.setItem(row, 0, QTableWidgetItem(activity["date"]))
+            self.activities_table.setItem(row, 1, QTableWidgetItem(str(activity["steps"])))
+            self.activities_table.setItem(row, 2, QTableWidgetItem(str(activity["calories"])))
+
+    def edit_activity(self):
+        selected_row = self.activities_table.currentRow()
+        if selected_row == -1:
+            QMessageBox.warning(self, "Ошибка", "Выберите запись для редактирования.")
+            return
+
+        date_item = self.activities_table.item(selected_row, 0)
+        steps_item = self.activities_table.item(selected_row, 1)
+        calories_item = self.activities_table.item(selected_row, 2)
+
+        # Запрашиваем новые значения
+        new_date, ok_date = QInputDialog.getText(self, "Редактирование активности", "Введите новую дату:",
+                                                 QLineEdit.Normal, date_item.text())
+        new_steps, ok_steps = QInputDialog.getInt(self, "Редактирование активности", "Введите новое количество шагов:",
+                                                  value=int(steps_item.text()))
+        new_calories, ok_calories = QInputDialog.getDouble(self, "Редактирование активности",
+                                                           "Введите новое количество калорий:",
+                                                           value=float(calories_item.text()))
+
+        if ok_date and ok_steps and ok_calories:
+            activity_id = self.db_manager.get_activity_id(self.user_data['id'], date_item.text())
+            if activity_id:
+                self.db_manager.update_activity(activity_id, new_date, new_steps, new_calories)
+                QMessageBox.information(self, "Успех", "Активность обновлена успешно!")
+                self.load_activities()
+
+    def delete_activity(self):
+        selected_row = self.activities_table.currentRow()
+        if selected_row == -1:
+            QMessageBox.warning(self, "Ошибка", "Выберите запись для удаления.")
+            return
+
+        date_item = self.activities_table.item(selected_row, 0)
+
+        confirm = QMessageBox.question(self, "Удаление активности",
+                                       f"Вы уверены, что хотите удалить запись за '{date_item.text()}'?",
+                                       QMessageBox.Yes | QMessageBox.No)
+        if confirm == QMessageBox.Yes:
+            activity_id = self.db_manager.get_activity_id(self.user_data['id'], date_item.text())
+            if activity_id:
+                self.db_manager.delete_activity(activity_id)
+                QMessageBox.information(self, "Успех", "Активность удалена успешно!")
+                self.load_activities()
 
     def add_activity(self):
         date = self.date_input.date().toString("yyyy-MM-dd")
@@ -69,6 +140,7 @@ class ActivityWidget(QWidget):
             QMessageBox.information(self, "Успех", "Активность добавлена успешно!")
             self.steps_input.clear()
             self.calories_input.clear()
+            self.load_activities()
         except ValueError:
             QMessageBox.warning(self, "Ошибка", "Шаги и калории должны быть числовыми значениями.")
 

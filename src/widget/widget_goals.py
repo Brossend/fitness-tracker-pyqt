@@ -33,16 +33,6 @@ class GoalsWidget(QWidget):
         self.goals_table.setHorizontalHeaderLabels(["Цель", "Текущее значение", "Целевое значение"])
         layout.addWidget(self.goals_table)
 
-        # Кнопка редактирования цели
-        edit_goal_button = QPushButton("Редактировать цель")
-        edit_goal_button.clicked.connect(self.edit_goal)
-        layout.addWidget(edit_goal_button)
-
-        # Кнопка удаления цели
-        delete_goal_button = QPushButton("Удалить цель")
-        delete_goal_button.clicked.connect(self.delete_goal)
-        layout.addWidget(delete_goal_button)
-
         # Поля ввода для новой цели
         layout.addWidget(QLabel("Добавить новую цель"))
         self.goal_name_input = QLineEdit()
@@ -57,6 +47,16 @@ class GoalsWidget(QWidget):
         add_goal_button = QPushButton("Добавить цель")
         add_goal_button.clicked.connect(self.add_goal)
         layout.addWidget(add_goal_button)
+
+        # Кнопка редактирования цели
+        edit_goal_button = QPushButton("Редактировать цель")
+        edit_goal_button.clicked.connect(self.edit_goal)
+        layout.addWidget(edit_goal_button)
+
+        # Кнопка удаления цели
+        delete_goal_button = QPushButton("Удалить цель")
+        delete_goal_button.clicked.connect(self.delete_goal)
+        layout.addWidget(delete_goal_button)
 
         self.setLayout(layout)
 

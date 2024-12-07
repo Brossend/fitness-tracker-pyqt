@@ -17,35 +17,6 @@ class DashboardWidget(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
-        # Навигационное меню
-        nav_layout = QHBoxLayout()
-
-        profile_button = QPushButton("Мой профиль")
-        profile_button.clicked.connect(self.show_profile)
-        layout.addWidget(profile_button)
-
-        goals_button = QPushButton("Цели")
-        goals_button.clicked.connect(self.show_goals)
-        nav_layout.addWidget(goals_button)
-
-        progress_button = QPushButton("Прогресс")
-        progress_button.clicked.connect(self.show_progress)
-        nav_layout.addWidget(progress_button)
-
-        analytics_button = QPushButton("Аналитика")
-        analytics_button.clicked.connect(self.show_analytics)
-        nav_layout.addWidget(analytics_button)
-
-        activity_button = QPushButton("Добавить активность")
-        activity_button.clicked.connect(self.show_add_activity)
-        nav_layout.addWidget(activity_button)
-
-        logout_button = QPushButton("Выйти")
-        logout_button.clicked.connect(self.logout)
-        nav_layout.addWidget(logout_button)
-
-        layout.addLayout(nav_layout)
-
         # Приветствие пользователя
         welcome_label = QLabel(f"Добро пожаловать, {self.user_data['name']}!")
         welcome_label.setStyleSheet("font-size: 18px; font-weight: bold;")
@@ -54,6 +25,30 @@ class DashboardWidget(QWidget):
         # Информация о пользователе
         user_info_label = QLabel(f"ID пользователя: {self.user_data['id']}")
         layout.addWidget(user_info_label)
+
+        profile_button = QPushButton("Мой профиль")
+        profile_button.clicked.connect(self.show_profile)
+        layout.addWidget(profile_button)
+
+        goals_button = QPushButton("Цели")
+        goals_button.clicked.connect(self.show_goals)
+        layout.addWidget(goals_button)
+
+        progress_button = QPushButton("Прогресс")
+        progress_button.clicked.connect(self.show_progress)
+        layout.addWidget(progress_button)
+
+        analytics_button = QPushButton("Аналитика")
+        analytics_button.clicked.connect(self.show_analytics)
+        layout.addWidget(analytics_button)
+
+        activity_button = QPushButton("Добавить активность")
+        activity_button.clicked.connect(self.show_add_activity)
+        layout.addWidget(activity_button)
+
+        logout_button = QPushButton("Выйти")
+        logout_button.clicked.connect(self.logout)
+        layout.addWidget(logout_button)
 
         self.setLayout(layout)
 

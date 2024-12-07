@@ -142,6 +142,54 @@ class DatabaseManager:
             for row in rows
         ]
 
+    def get_activities(self, user_id):
+        self.cursor.execute(
+            """
+            SELECT id, activity_date, steps, calories_burned
+            FROM ActivityLog
+            WHERE user_id = ?
+            ORDER BY activity_date DESC;
+            """,
+            (user_id,)
+        )
+        rows = self.cursor.fetchall()
+        return [
+            {"id": row[0], "date": row[1], "steps": row[2], "calories": row[3]}
+            for row in rows
+        ]
+
+    def get_activity_id(self, user_id, date):
+        self.cursor.execute(
+            """
+            SELECT id FROM ActivityLog
+            WHERE user_id = ? AND activity_date = ?;
+            """,
+            (user_id, date)
+        )
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
+    def update_activity(self, activity_id, new_date, new_steps, new_calories):
+        self.cursor.execute(
+            """
+            UPDATE ActivityLog
+            SET activity_date = ?, steps = ?, calories_burned = ?
+            WHERE id = ?;
+            """,
+            (new_date, new_steps, new_calories, activity_id)
+        )
+        self.connection.commit()
+
+    def delete_activity(self, activity_id):
+        self.cursor.execute(
+            """
+            DELETE FROM ActivityLog
+            WHERE id = ?;
+            """,
+            (activity_id,)
+        )
+        self.connection.commit()
+
     def add_activity(self, user_id, date, steps, calories):
         self.cursor.execute(
             """
