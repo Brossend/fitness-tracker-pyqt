@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem
+    QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton
 )
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -16,6 +16,10 @@ class ProgressWidget(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout()
+
+        back_button = QPushButton("Назад")
+        back_button.clicked.connect(self.go_back)
+        layout.addWidget(back_button)
 
         # Заголовок
         layout.addWidget(QLabel("Ваш прогресс"))
@@ -59,3 +63,7 @@ class ProgressWidget(QWidget):
         ax.set_ylabel("Шаги")
         ax.legend()
         self.canvas.draw()
+
+    def go_back(self):
+        from dashboard_widget import DashboardWidget
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))

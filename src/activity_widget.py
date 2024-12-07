@@ -18,6 +18,10 @@ class ActivityWidget(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
+        back_button = QPushButton("Назад")
+        back_button.clicked.connect(self.go_back)
+        layout.addWidget(back_button)
+
         # Заголовок
         layout.addWidget(QLabel("Добавить активность"))
 
@@ -68,3 +72,7 @@ class ActivityWidget(QWidget):
 
     def closeEvent(self, event):
         self.db_manager.close()
+
+    def go_back(self):
+        from dashboard_widget import DashboardWidget
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))

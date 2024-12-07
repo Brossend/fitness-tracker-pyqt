@@ -18,6 +18,10 @@ class GoalsWidget(QWidget):
     def init_ui(self):
         layout = QVBoxLayout()
 
+        back_button = QPushButton("Назад")
+        back_button.clicked.connect(self.go_back)
+        layout.addWidget(back_button)
+
         # Заголовок
         layout.addWidget(QLabel("Ваши цели"))
 
@@ -70,3 +74,7 @@ class GoalsWidget(QWidget):
             self.load_goals()  # Обновление таблицы целей
         except ValueError:
             QMessageBox.warning(self, "Ошибка", "Целевое значение должно быть числом.")
+
+    def go_back(self):
+        from dashboard_widget import DashboardWidget
+        self.parent().setCentralWidget(DashboardWidget({"id": self.user_id, "name": "Пользователь"}))
