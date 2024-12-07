@@ -33,5 +33,30 @@ class DatabaseManager:
             return {"id": user[0], "name": user[1]}
         return None
 
+    def get_goals(self, user_id):
+        self.cursor.execute(
+            """
+            SELECT goal_name, current_value, target_value
+            FROM Goals
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
+        rows = self.cursor.fetchall()
+        return [
+            {"goal_name": row[0], "current_value": row[1], "target_value": row[2]}
+            for row in rows
+        ]
+
+    def add_goal(self, user_id, goal_name, target_value):
+        self.cursor.execute(
+            """
+            INSERT INTO Goals (user_id, goal_name, target_value)
+            VALUES (?, ?, ?)
+            """,
+            (user_id, goal_name, target_value)
+        )
+        self.connection.commit()
+
     def close(self):
         self.connection.close()

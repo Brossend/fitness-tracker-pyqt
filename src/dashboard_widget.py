@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
+from src.goals_widget import GoalsWidget
+
 
 class DashboardWidget(QWidget):
     def __init__(self, user_data):
@@ -31,8 +33,7 @@ class DashboardWidget(QWidget):
         self.setLayout(layout)
 
     def show_goals(self):
-        # Будет заменено на реальный функционал в будущем
-        print("Переход на экран целей")
+        self.parent().setCentralWidget(GoalsWidget(self.user_data['id']))
 
     def show_progress(self):
         # Будет заменено на реальный функционал в будущем
