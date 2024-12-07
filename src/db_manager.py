@@ -58,5 +58,31 @@ class DatabaseManager:
         )
         self.connection.commit()
 
+    def get_progress(self, user_id):
+        self.cursor.execute(
+            """
+            SELECT activity_date, steps, calories_burned
+            FROM ActivityLog
+            WHERE user_id = ?
+            ORDER BY activity_date ASC
+            """,
+            (user_id,)
+        )
+        rows = self.cursor.fetchall()
+        return [
+            {"date": row[0], "steps": row[1], "calories": row[2]}
+            for row in rows
+        ]
+
+    def add_activity(self, user_id, date, steps, calories):
+        self.cursor.execute(
+            """
+            INSERT INTO ActivityLog (user_id, activity_date, steps, calories_burned)
+            VALUES (?, ?, ?, ?)
+            """,
+            (user_id, date, steps, calories)
+        )
+        self.connection.commit()
+
     def close(self):
         self.connection.close()

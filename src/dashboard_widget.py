@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
+from src.activity_widget import ActivityWidget
 from src.goals_widget import GoalsWidget
+from src.progress_widget import ProgressWidget
 
 
 class DashboardWidget(QWidget):
@@ -22,6 +24,10 @@ class DashboardWidget(QWidget):
         layout.addWidget(user_info_label)
 
         # Кнопки действий
+        add_activity_button = QPushButton("Добавить активность")
+        add_activity_button.clicked.connect(self.show_add_activity)
+        layout.addWidget(add_activity_button)
+
         goals_button = QPushButton("Цели и задачи")
         goals_button.clicked.connect(self.show_goals)
         layout.addWidget(goals_button)
@@ -32,9 +38,11 @@ class DashboardWidget(QWidget):
 
         self.setLayout(layout)
 
+    def show_add_activity(self):
+        self.parent().setCentralWidget(ActivityWidget(self.user_data['id']))
+
     def show_goals(self):
         self.parent().setCentralWidget(GoalsWidget(self.user_data['id']))
 
     def show_progress(self):
-        # Будет заменено на реальный функционал в будущем
-        print("Переход на экран прогресса")
+        self.parent().setCentralWidget(ProgressWidget(self.user_data['id']))
