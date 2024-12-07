@@ -94,6 +94,38 @@ class DatabaseManager:
         )
         self.connection.commit()
 
+    def get_goal_id(self, user_id, goal_name):
+        self.cursor.execute(
+            """
+            SELECT id FROM Goals
+            WHERE user_id = ? AND goal_name = ?;
+            """,
+            (user_id, goal_name)
+        )
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
+    def update_goal(self, goal_id, new_name, new_target_value):
+        self.cursor.execute(
+            """
+            UPDATE Goals
+            SET goal_name = ?, target_value = ?
+            WHERE id = ?;
+            """,
+            (new_name, new_target_value, goal_id)
+        )
+        self.connection.commit()
+
+    def delete_goal(self, goal_id):
+        self.cursor.execute(
+            """
+            DELETE FROM Goals
+            WHERE id = ?;
+            """,
+            (goal_id,)
+        )
+        self.connection.commit()
+
     def get_progress(self, user_id):
         self.cursor.execute(
             """
