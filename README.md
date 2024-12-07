@@ -16,8 +16,8 @@ Fitness Tracker — это приложение для мониторинга ф
 ### 1. Клонируйте репозиторий
 
 ```bash
-    git clone https://github.com/yourusername/fitness-tracker.git
-    cd fitness-tracker
+    git clone https://github.com/Brossend/fitness-tracker-pyqt.git
+    cd fitness-tracker-pyqt
 ```
 ### 2. Создайте виртуальное окружение
 
