@@ -72,7 +72,7 @@ class DatabaseManager:
     def get_goals(self, user_id):
         self.cursor.execute(
             """
-            SELECT goal_name, current_value, target_value
+            SELECT goal_name, current_value, target_value, deadline
             FROM Goals
             WHERE user_id = ?
             """,
@@ -80,19 +80,31 @@ class DatabaseManager:
         )
         rows = self.cursor.fetchall()
         return [
-            {"goal_name": row[0], "current_value": row[1], "target_value": row[2]}
+            {"goal_name": row[0], "current_value": row[1], "target_value": row[2], "deadline": row[3]}
             for row in rows
         ]
 
-    def add_goal(self, user_id, goal_name, target_value):
+    def add_goal(self, user_id, goal_name, target_value, deadline):
         self.cursor.execute(
             """
-            INSERT INTO Goals (user_id, goal_name, target_value)
-            VALUES (?, ?, ?)
+            INSERT INTO Goals (user_id, goal_name, target_value, deadline)
+            VALUES (?, ?, ?, ?)
             """,
-            (user_id, goal_name, target_value)
+            (user_id, goal_name, target_value, deadline)
         )
         self.connection.commit()
+
+    def get_upcoming_goals(self, user_id):
+        self.cursor.execute(
+            """
+            SELECT goal_name, deadline
+            FROM Goals
+            WHERE user_id = ? AND deadline BETWEEN DATE('now') AND DATE('now', '+3 days');
+            """,
+            (user_id,)
+        )
+        rows = self.cursor.fetchall()
+        return [{"goal_name": row[0], "deadline": row[1]} for row in rows]
 
     def get_goal_id(self, user_id, goal_name):
         self.cursor.execute(
@@ -105,14 +117,14 @@ class DatabaseManager:
         result = self.cursor.fetchone()
         return result[0] if result else None
 
-    def update_goal(self, goal_id, new_name, new_target_value):
+    def update_goal(self, goal_id, new_name, new_target_value, new_deadline):
         self.cursor.execute(
             """
             UPDATE Goals
-            SET goal_name = ?, target_value = ?
+            SET goal_name = ?, target_value = ?, deadline = ?
             WHERE id = ?;
             """,
-            (new_name, new_target_value, goal_id)
+            (new_name, new_target_value, new_deadline, goal_id)
         )
         self.connection.commit()
 
@@ -168,6 +180,16 @@ class DatabaseManager:
         )
         result = self.cursor.fetchone()
         return result[0] if result else None
+
+    def get_activity_for_date(self, user_id, date):
+        self.cursor.execute(
+            """
+            SELECT * FROM ActivityLog
+            WHERE user_id = ? AND activity_date = ?;
+            """,
+            (user_id, date)
+        )
+        return self.cursor.fetchone()
 
     def update_activity(self, activity_id, new_date, new_steps, new_calories):
         self.cursor.execute(

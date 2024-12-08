@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 
+from src.db.db_manager import DatabaseManager
+from src.notification.notification_manager import NotificationManager
 from src.state.state_session import state_session
 from src.widget.widget_activity import ActivityWidget
 from src.widget.widget_analytics import AnalyticsWidget
@@ -12,7 +14,10 @@ class DashboardWidget(QWidget):
     def __init__(self, user_data):
         super().__init__()
         self.user_data = user_data
+        self.db_manager = DatabaseManager()
+        self.notification_manager = NotificationManager(self.db_manager, self.user_data['id'])
         self.init_ui()
+        self.check_notifications()
 
     def init_ui(self):
         layout = QVBoxLayout()
@@ -51,6 +56,10 @@ class DashboardWidget(QWidget):
         layout.addWidget(logout_button)
 
         self.setLayout(layout)
+
+    def check_notifications(self):
+        self.notification_manager.check_activity_reminder()
+        self.notification_manager.check_goal_deadlines()
 
     def show_add_activity(self):
         self.parent().setCentralWidget(ActivityWidget())
