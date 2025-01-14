@@ -3,7 +3,7 @@ from datetime import datetime
 from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QMessageBox, QInputDialog,
-    QDateEdit
+    QDateEdit, QFileDialog
 )
 
 from src.db.db_manager import DatabaseManager
@@ -68,6 +68,16 @@ class GoalsWidget(QWidget):
         delete_goal_button = QPushButton("Удалить цель")
         delete_goal_button.clicked.connect(self.delete_goal)
         layout.addWidget(delete_goal_button)
+
+        # Кнопка для скачивания целей в формате TXT
+        download_button = QPushButton("Скачать данные целей")
+        download_button.clicked.connect(self.download_goals_as_txt)
+        layout.addWidget(download_button)
+
+        # Кнопка загрузки целей из TXT
+        load_button = QPushButton("Загрузить цели из файла")
+        load_button.clicked.connect(self.load_goals_from_txt)
+        layout.addWidget(load_button)
 
         self.setLayout(layout)
 
@@ -150,6 +160,73 @@ class GoalsWidget(QWidget):
                 self.db_manager.delete_goal(goal_id)
                 QMessageBox.information(self, "Успех", "Цель удалена успешно!")
                 self.load_goals()
+
+    def load_goals_from_txt(self):
+        # Открываем диалог для выбора файла
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл с целями", "", "Text Files (*.txt);;All Files (*)", options=options)
+        if not file_path:
+            return  # Если пользователь отменил выбор файла
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
+
+            # Переменные для хранения данных о цели
+            goal_name, current_value, target_value, deadline = '', '', '', ''
+
+            # Чтение строк и извлечение данных
+            for line in lines:
+                line = line.strip()
+
+                if line.startswith("Цель:"):
+                    if goal_name:  # Если есть данные о предыдущей цели, добавляем в базу
+                        self.db_manager.add_goal(self.user_data['id'], goal_name, float(target_value), deadline)
+                    goal_name = line.split(":")[1].strip()
+                elif line.startswith("Текущее значение:"):
+                    current_value = line.split(":")[1].strip()
+                elif line.startswith("Целевое значение:"):
+                    target_value = line.split(":")[1].strip()
+                elif line.startswith("Дедлайн:"):
+                    deadline = line.split(":")[1].strip()
+
+            # Добавляем последнюю цель
+            if goal_name:
+                self.db_manager.add_goal(self.user_data['id'], goal_name, float(target_value), deadline)
+
+            # Обновление таблицы после загрузки
+            self.load_goals()
+
+            QMessageBox.information(self, "Успех", "Цели успешно загружены из файла!")
+
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", f"Ошибка при загрузке целей: {str(e)}")
+
+    def download_goals_as_txt(self):
+        # Получаем все цели пользователя из базы данных
+        goals = self.db_manager.get_goals(self.user_data['id'])
+        if not goals:
+            QMessageBox.warning(self, "Ошибка", "У пользователя нет целей для скачивания.")
+            return
+
+        # Открываем диалог для выбора места сохранения
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getSaveFileName(self, "Сохранить как", "", "Text Files (*.txt)", options=options)
+        if not file_path:
+            return  # Если пользователь отменил выбор файла
+
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                for goal in goals:
+                    goal_name = goal["goal_name"]
+                    current_value = goal["current_value"]
+                    target_value = goal["target_value"]
+                    deadline = goal["deadline"]
+                    file.write(
+                        f"Цель: {goal_name}\nТекущее значение: {current_value}\nЦелевое значение: {target_value}\nДедлайн: {deadline}\n\n")
+            QMessageBox.information(self, "Успех", f"Цели успешно сохранены в файл!")
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", f"Ошибка при сохранении файла: {str(e)}")
 
     def go_back(self):
         from src.widget.widget_dashboard import DashboardWidget

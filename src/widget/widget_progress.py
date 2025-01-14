@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton
+    QWidget, QVBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, QFileDialog
 )
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -37,6 +37,11 @@ class ProgressWidget(QWidget):
         self.canvas = FigureCanvas(self.figure)
         layout.addWidget(self.canvas)
 
+        # Кнопка для скачивания данных
+        download_button = QPushButton("Скачать данные активности")
+        download_button.clicked.connect(self.download_activity_data)
+        layout.addWidget(download_button)
+
         self.setLayout(layout)
 
     def load_progress(self):
@@ -52,6 +57,22 @@ class ProgressWidget(QWidget):
 
         # Построение графика
         self.plot_progress(progress_data)
+
+    def download_activity_data(self):
+        progress_data = self.db_manager.get_progress(self.user_data['id'])
+        # Форматируем данные для сохранения в файл
+        data = "Дата\tШаги\tКалории\n"
+        for entry in progress_data:
+            data += f"{entry['date']}\t{entry['steps']}\t{entry['calories']}\n"
+
+        # Сохраняем данные в файл .txt
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getSaveFileName(self, "Сохранить как", "", "Text Files (*.txt);;All Files (*)",
+                                                   options=options)
+        if file_path:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(data)
+            QMessageBox.information(self, "Успех", "Данные активности успешно сохранены в файл.")
 
     def plot_progress(self, progress_data):
         dates = [entry["date"] for entry in progress_data]

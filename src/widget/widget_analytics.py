@@ -1,3 +1,5 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 from src.db.db_manager import DatabaseManager
@@ -19,6 +21,14 @@ class AnalyticsWidget(QWidget):
         layout.addWidget(back_button)
 
         layout.addWidget(QLabel("Аналитика активности"))
+
+        # Добавление изображения
+        image_label = QLabel(self)
+        pixmap = QPixmap("../assets/images/muscules.jpg")
+        image_label.setPixmap(pixmap)
+        image_label.setAlignment(Qt.AlignCenter)
+        image_label.setFixedHeight(400)
+        layout.addWidget(image_label)
 
         # Получение данных аналитики
         analytics = self.db_manager.get_analytics(self.user_data['id'])
