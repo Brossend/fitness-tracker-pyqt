@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QDateEdit, QTableWidgetItem, QInputDialog,
-    QTableWidget
+    QTableWidget, QFileDialog
 )
 from PyQt5.QtCore import QDate
 
@@ -58,6 +58,11 @@ class ActivityWidget(QWidget):
         add_button.clicked.connect(self.add_activity)
         layout.addWidget(add_button)
 
+        # Кнопка загрузки активности из файла
+        load_button = QPushButton("Загрузить активности из файла")
+        load_button.clicked.connect(self.load_activities_from_file)
+        layout.addWidget(load_button)
+
         # Кнопка редактирования активности
         edit_button = QPushButton("Редактировать активность")
         edit_button.clicked.connect(self.edit_activity)
@@ -79,6 +84,22 @@ class ActivityWidget(QWidget):
             self.activities_table.setItem(row, 0, QTableWidgetItem(activity["date"]))
             self.activities_table.setItem(row, 1, QTableWidgetItem(str(activity["steps"])))
             self.activities_table.setItem(row, 2, QTableWidgetItem(str(activity["calories"])))
+
+    def load_activities_from_file(self):
+        file_name, _ = QFileDialog.getOpenFileName(self, "Открыть файл", "", "Text Files (*.txt);;All Files (*)")
+        if not file_name:
+            return
+
+        try:
+            with open(file_name, 'r') as file:
+                for line in file:
+                    date, steps, calories = line.strip().split(
+                        ",")  # Предположим, что файл в формате "дата, шаги, калории"
+                    self.db_manager.add_activity(self.user_data['id'], date, int(steps), float(calories))
+            QMessageBox.information(self, "Успех", "Активности успешно загружены из файла.")
+            self.load_activities()
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", f"Не удалось загрузить файл: {e}")
 
     def edit_activity(self):
         selected_row = self.activities_table.currentRow()

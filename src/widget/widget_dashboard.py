@@ -1,3 +1,5 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 
 from src.db.db_manager import DatabaseManager
@@ -30,6 +32,14 @@ class DashboardWidget(QWidget):
         # Информация о пользователе
         user_info_label = QLabel(f"ID пользователя: {self.user_data['id']}")
         layout.addWidget(user_info_label)
+
+        # Добавление изображения
+        image_label = QLabel(self)
+        pixmap = QPixmap("../assets/images/bossgym.jpg")
+        image_label.setPixmap(pixmap)
+        image_label.setAlignment(Qt.AlignCenter)
+        image_label.setFixedHeight(400)
+        layout.addWidget(image_label)
 
         profile_button = QPushButton("Мой профиль")
         profile_button.clicked.connect(self.show_profile)

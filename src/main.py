@@ -1,5 +1,8 @@
 import os
 import sys
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QVBoxLayout, QLabel
 
 from PyQt5.QtWidgets import QMenuBar, QAction
@@ -43,6 +46,14 @@ class MainWindow(QMainWindow):
         label = QLabel("Добро пожаловать в Fitness Tracker!")
         label.setStyleSheet("font-size: 20px; font-weight: bold;")
         layout.addWidget(label)
+
+        # Добавление изображения
+        image_label = QLabel(self)
+        pixmap = QPixmap("../assets/images/gigachad.png")
+        image_label.setPixmap(pixmap)
+        image_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(image_label)
+
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
